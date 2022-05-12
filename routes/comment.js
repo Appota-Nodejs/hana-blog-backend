@@ -1,9 +1,9 @@
-const express = require('express');
+// const express = require('express');
 
-const commentControllers = require('../controllers/comment-controllers');
+// const commentControllers = require('../controllers/comment-controllers');
 
-const router = express.Router();
+// const router = express.Router();
 
-router.post('/:postId', commentControllers.createComment);
+// router.post('/:postId', commentControllers.createComment);
 
-module.exports = router;
+// module.exports = router;
