@@ -16,12 +16,10 @@ to install all dependencies
 
 ### _Step 2_
 
-Create .env file with these 4 fields
+Create .env file with these 2 fields
 
 ```
-DATABASE=hana-blog
-USERNAME=???
-PASSWORD=???
+SQL_URI='mysql://USERNAME:PASSWORD@localhost:3306/hana-blog'
 JWT_KEY=???
 ```
 
