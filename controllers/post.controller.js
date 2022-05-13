@@ -3,14 +3,21 @@ const Post = require('../models/post');
 // Get all the posts - list
 exports.posts = async (req, res, next) => {
   try {
-    const posts = await Post.findAll();
+    const limit = 5;
+    const { offset =  1 } = req.query;
+
+    const posts = await Post.findAll({
+      offset: (offset - 1) * limit,
+      limit
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Get all the posts',
       posts
     });
   } catch (error) {
-    next(error);
+    next(new Error('Error Server!'));
   }
 };
 
@@ -29,7 +36,7 @@ exports.getOne = async (req, res, next) => {
       post
     });
   } catch (error) {
-    next(error);
+    next(new Error('Error Server!'));
   }
 };
 
@@ -51,7 +58,7 @@ exports.create = async (req, res, next) => {
       post
     });
   } catch (error) {
-    next(error);
+    next(new Error('Error Server!'));
   }
 };
 
@@ -70,7 +77,7 @@ exports.update = async (req, res, next) => {
       message: 'Update the post success'
     });
   } catch (error) {
-    next(error);
+    next(new Error('Error Server!'));
   }
 };
 
@@ -88,6 +95,6 @@ exports.destroy = async (req, res, next) => {
       message: 'Delete the post success'
     });
   } catch (error) {
-    next(error);
+    next(new Error('Error Server!'));
   }
 };
