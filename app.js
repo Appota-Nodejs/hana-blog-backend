@@ -28,13 +28,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/users', userRoutes);
-<<<<<<< HEAD
 app.use('/api/posts', postRoutes);
-// app.use('/api/comments', commentRoutes);
-=======
-// app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
->>>>>>> main
 
 app.use(notFoundController.get404);
 
