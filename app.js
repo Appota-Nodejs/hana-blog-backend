@@ -6,9 +6,9 @@ require('dotenv').config();
 
 const sequelize = require('./utils/database');
 const notFoundController = require('./controllers/not-found');
-const userRoutes = require('./routes/user');
-const postRoutes = require('./routes/post');
-const commentRoutes = require('./routes/comment');
+const userRoutes = require('./routes/user-routes');
+const postRoutes = require('./routes/post-routes');
+const commentRoutes = require('./routes/comment-routes');
 
 const app = express();
 
@@ -28,8 +28,13 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/users', userRoutes);
+<<<<<<< HEAD
 app.use('/api/posts', postRoutes);
 // app.use('/api/comments', commentRoutes);
+=======
+// app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
+>>>>>>> main
 
 app.use(notFoundController.get404);
 
