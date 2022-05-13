@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const Comment = require('../models/comment');
 
 const getComments = async (req, res, next) => {
@@ -25,7 +26,17 @@ const getComments = async (req, res, next) => {
 };
 
 const createComment = async (req, res, next) => {
+  const validationError = validationResult(req);
+  if (!validationError.isEmpty()) {
+    const error = new Error(
+      'Invalid comment, please check your inputs and try again later'
+    );
+    return next(error);
+  }
+
   const { content, authorId, postId } = req.body;
+
+  // check author and post existances
 
   const newComment = new Comment({
     content,

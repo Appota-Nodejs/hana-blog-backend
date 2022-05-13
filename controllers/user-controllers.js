@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -14,10 +15,22 @@ const getUser = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ user: user });
+  res.status(200).json({
+    user: {
+      userId: user.dataValues.id,
+      username: user.dataValues.username,
+      description: user.dataValues.description,
+    },
+  });
 };
 
 const register = async (req, res, next) => {
+  const validationError = validationResult(req);
+  if (!validationError.isEmpty()) {
+    const error = new Error('Invalid inputs passed, please check your data');
+    return next(error);
+  }
+
   const { username, password, description } = req.body;
   let existingUser;
 
@@ -80,6 +93,12 @@ const register = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+  const validationError = validationResult(req);
+  if (!validationError.isEmpty()) {
+    const error = new Error('Invalid inputs passed, please check your data');
+    return next(error);
+  }
+
   const { username, password } = req.body;
   let existingUser;
 
