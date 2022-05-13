@@ -32,8 +32,8 @@ const register = async (req, res, next) => {
   }
 
   const { username, password, description } = req.body;
-  let existingUser;
 
+  let existingUser;
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {

@@ -47,6 +47,13 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
+  if (!correspondingPost) {
+    const error = new Error(
+      'Invalid values for comment, please try again later'
+    );
+    return next(error);
+  }
+
   const newComment = new Comment({
     content,
     authorId,
