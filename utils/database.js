@@ -11,7 +11,7 @@ const Sequelize = require('sequelize');
 // );
 
 const sequelize = new Sequelize(
-  'mysql://root:MySQL.21@localhost:3306/hana-blog'
+  process.env.URI_MYSQL
 );
 
 module.exports = sequelize;

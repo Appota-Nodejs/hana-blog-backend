@@ -1,17 +1,21 @@
-// const express = require('express');
+const express = require('express');
 
-// const postControllers = require('../controllers/post-controllers');
+const router = express.Router();
 
-// const router = express.Router();
+const {
+  posts,
+  getOne,
+  create,
+  update,
+  destroy
+} = require('../controllers/post.controller');
+const authenticate = require('../middlewares/check-auth');
 
-// router.get('/', postControllers.getPosts);
+router.get('/', posts);
+router.get('/:id', getOne);
 
-// router.get('/:postId', postControllers.getPost);
+router.post('/', authenticate, create);
+router.put('/:id', authenticate, update);
+router.delete('/:id', authenticate, destroy);
 
-// router.post('/:postId', postControllers.createPost);
-
-// router.patch('/:postId', postControllers.updatePost);
-
-// router.delete('/:postId', postControllers.deletePost);
-
-// module.exports = router;
+module.exports = router;

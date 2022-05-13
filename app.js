@@ -14,7 +14,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -28,8 +28,13 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/users', userRoutes);
+<<<<<<< HEAD
+app.use('/api/posts', postRoutes);
+// app.use('/api/comments', commentRoutes);
+=======
 // app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
+>>>>>>> main
 
 app.use(notFoundController.get404);
 

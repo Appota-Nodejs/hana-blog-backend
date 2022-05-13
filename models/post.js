@@ -23,7 +23,7 @@ const Post = sequelize.define('post', {
   authorId: {
     type: Sequelize.INTEGER,
     allowNull: false,
-  },
+  }
 });
 
 module.exports = Post;
