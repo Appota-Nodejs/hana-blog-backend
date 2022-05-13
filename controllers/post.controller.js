@@ -1,10 +1,11 @@
 const Post = require('../models/post');
+const { validationResult } = require('express-validator');
 
 // Get all the posts - list
 exports.posts = async (req, res, next) => {
   try {
     const limit = 5;
-    const { offset =  1 } = req.query;
+    const { offset = 1 } = req.query;
 
     const posts = await Post.findAll({
       offset: (offset - 1) * limit,
@@ -43,7 +44,16 @@ exports.getOne = async (req, res, next) => {
 // create one the post
 exports.create = async (req, res, next) => {
   try {
-    const { title, content, imageLink, authorId } = req.body;
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      const error = new Error(
+        'Invalid comment, please check your inputs and try again later'
+      );
+      return next(error);
+    }
+
+    const { title, content, imageLink } = req.body;
+    const authorId = req.userData.userId;
 
     const post = await Post.create({
       title,
@@ -65,12 +75,22 @@ exports.create = async (req, res, next) => {
 // update one the post
 exports.update = async (req, res, next) => {
   try {
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      const error = new Error(
+        'Invalid comment, please check your inputs and try again later'
+      );
+      return next(error);
+    }
+
     const body = req.body;
     const id = req.params.id;
 
-    await Post.update(body, {
+    const post = await Post.update(body, {
       where: { id }
     });
+
+    if (!post[0]) throw next(new Error('id not found!'));
 
     res.status(200).json({
       success: true,
@@ -86,9 +106,11 @@ exports.destroy = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    await Post.destroy({
+    const post = await Post.destroy({
       where: { id }
     });
+
+    if (!post[0]) throw next(new Error('id not found!'));
 
     res.status(200).json({
       success: true,
