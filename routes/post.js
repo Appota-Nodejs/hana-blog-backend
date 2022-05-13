@@ -1,28 +1,12 @@
-<<<<<<< HEAD
 const express = require('express');
 const router = express.Router();
 
-const { posts } = require('../controllers/post.controller');
+const { posts, getOne, create, update, destroy } = require('../controllers/post.controller');
 
-router.get('/posts', posts);
+router.get('/', posts);
+router.get('/:id', getOne);
+router.post('/', create);
+router.put('/:id', update);
+router.delete('/:id', destroy);
 
 module.exports = router;
-=======
-// const express = require('express');
-
-// const postControllers = require('../controllers/post-controllers');
-
-// const router = express.Router();
-
-// router.get('/', postControllers.getPosts);
-
-// router.get('/:postId', postControllers.getPost);
-
-// router.post('/:postId', postControllers.createPost);
-
-// router.patch('/:postId', postControllers.updatePost);
-
-// router.delete('/:postId', postControllers.deletePost);
-
-// module.exports = router;
->>>>>>> main

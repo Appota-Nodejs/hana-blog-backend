@@ -2,17 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-<<<<<<< HEAD
-const dotenv = require('dotenv');
-const app = express();
-
-dotenv.config();
-
-const errorController = require('./controllers/error');
-const sequelize = require('./utils/database');
-=======
 require('dotenv').config();
->>>>>>> main
 
 const sequelize = require('./utils/database');
 const notFoundController = require('./controllers/not-found');
@@ -24,13 +14,8 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
-<<<<<<< HEAD
-// app.use('/api', userRoutes);
-app.use('/api', postRoutes);
-//
-=======
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -43,26 +28,18 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/users', userRoutes);
-// app.use('/api/posts', postRoutes);
+app.use('/api/posts', postRoutes);
 // app.use('/api/comments', commentRoutes);
 
 app.use(notFoundController.get404);
 
->>>>>>> main
 app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({ message: error.message || 'An error occurred!' });
 });
 
-<<<<<<< HEAD
-app.use(errorController.get404);
-
-sequelize
-  .sync()
-=======
 sequelize
   .sync({ alter: true })
->>>>>>> main
   .then((result) => {
     app.listen(process.env.PORT || 8000);
   })

@@ -1,8 +1,5 @@
 const Sequelize = require('sequelize');
 
-<<<<<<< HEAD
-// database - username - password
-=======
 // const sequelize = new Sequelize(
 //   process.env.DATABASE,
 //   process.env.USERNAME,
@@ -13,9 +10,8 @@ const Sequelize = require('sequelize');
 //   }
 // );
 
->>>>>>> main
 const sequelize = new Sequelize(
-  'mysql://root:MySQL.21@localhost:3306/hana-blog'
+  process.env.URI_MYSQL
 );
 
 module.exports = sequelize;
