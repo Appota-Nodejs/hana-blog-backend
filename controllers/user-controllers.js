@@ -10,7 +10,8 @@ const getUser = async (req, res, next) => {
   try {
     user = await User.findByPk(userId);
   } catch (err) {
-    return next(err);
+    const error = new Error('Fetching user failed, please try again later');
+    return next(error);
   }
 
   res.status(200).json({ user: user });
@@ -23,19 +24,21 @@ const register = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
-    return next(err);
+    const error = new Error('Registering failed, please try again later');
+    return next(error);
   }
 
   if (existingUser) {
-    const err = new Error('User has already existed!');
-    return next(err);
+    const error = new Error('User has already existed');
+    return next(error);
   }
 
   let hashedPassword;
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    return next(err);
+    const error = new Error('Could not create user, please try again later');
+    return next(error);
   }
 
   const newUser = new User({
@@ -48,7 +51,8 @@ const register = async (req, res, next) => {
   try {
     createdUser = await newUser.save();
   } catch (err) {
-    return next(err);
+    const error = new Error('Registering failed, please try again later');
+    return next(error);
   }
 
   let token;
@@ -63,7 +67,8 @@ const register = async (req, res, next) => {
       { expiresIn: '1h' }
     );
   } catch (err) {
-    return next(err);
+    const error = new Error('Registering failed, please try again later');
+    return next(error);
   }
 
   res.status(201).json({
@@ -81,24 +86,28 @@ const login = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
-    return next(err);
+    const error = new Error('Logging in failed, please try again later');
+    return next(error);
   }
 
   if (!existingUser) {
-    const err = new Error('Invalid credentials, could not log you in');
-    return next(err);
+    const error = new Error('Invalid credentials, could not log you in');
+    return next(error);
   }
 
   let isValidPassword = false;
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch (err) {
-    return next(err);
+    const error = new Error(
+      'Could not log you in, please check your credentials and try again'
+    );
+    return next(error);
   }
 
   if (!isValidPassword) {
-    const err = new Error('Invalid credentials, could not log you in');
-    return next(err);
+    const error = new Error('Invalid credentials, could not log you in');
+    return next(error);
   }
 
   let token;
@@ -113,7 +122,8 @@ const login = async (req, res, next) => {
       { expiresIn: '1h' }
     );
   } catch (err) {
-    return next(err);
+    const error = new Error('Logging in failed, please try again later');
+    return next(error);
   }
 
   res.status(200).json({
