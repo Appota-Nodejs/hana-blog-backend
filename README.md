@@ -16,7 +16,7 @@ to install all dependencies
 
 ### _Step 2_
 
-Create .env file with these 3 fields
+Create .env file with these 4 fields
 
 ```
 DATABASE=hana-blog
