@@ -6,8 +6,8 @@ const User = require('../models/user');
 
 const getUser = async (req, res, next) => {
   const userId = req.params.userId;
-  let user;
 
+  let user;
   try {
     user = await User.findByPk(userId);
   } catch (err) {

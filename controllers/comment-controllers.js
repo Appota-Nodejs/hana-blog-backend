@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const Comment = require('../models/comment');
+const Post = require('../models/post');
 
 const getComments = async (req, res, next) => {
   const limit = 5;
@@ -36,7 +37,15 @@ const createComment = async (req, res, next) => {
 
   const { content, authorId, postId } = req.body;
 
-  // check author and post existances
+  let correspondingPost;
+  try {
+    correspondingPost = await Post.findByPk(postId);
+  } catch (err) {
+    const error = new Error(
+      'Invalid values for comment, please try again later'
+    );
+    return next(error);
+  }
 
   const newComment = new Comment({
     content,
