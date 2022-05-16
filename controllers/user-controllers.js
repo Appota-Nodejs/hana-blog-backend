@@ -7,12 +7,17 @@ const User = require('../models/user');
 const getUser = async (req, res, next) => {
   const userId = req.params.userId;
   let user;
-
   try {
     user = await User.findByPk(userId);
   } catch (err) {
     const error = new Error('Fetching user failed, please try again later');
     return next(error);
+  }
+
+  if (!user) {
+    res.status(200).json({
+      message: 'Invalid user',
+    });
   }
 
   res.status(200).json({
@@ -33,7 +38,6 @@ const register = async (req, res, next) => {
 
   const { username, password, description } = req.body;
   let existingUser;
-
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
@@ -101,7 +105,6 @@ const login = async (req, res, next) => {
 
   const { username, password } = req.body;
   let existingUser;
-
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {

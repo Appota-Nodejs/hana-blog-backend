@@ -8,8 +8,8 @@ const {
   getOne,
   create,
   update,
-  destroy
-} = require('../controllers/post.controller');
+  destroy,
+} = require('../controllers/post-controller');
 const authenticate = require('../middlewares/check-auth');
 
 router.get('/', posts);
