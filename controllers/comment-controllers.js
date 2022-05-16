@@ -19,7 +19,7 @@ const getComments = async (req, res, next) => {
     return next(error);
   }
 
-  const limit = 5;
+  const limit = 100;
   const offset = req.query.offset || 1;
   let total, comments;
   try {
