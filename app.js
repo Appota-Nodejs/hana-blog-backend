@@ -48,7 +48,7 @@ Post.hasMany(Comment, { foreignKey: 'postId' });
 sequelize
   .sync({ alter: true })
   .then((result) => {
-    app.listen(process.env.PORT || 8001);
+    app.listen(process.env.PORT || 8000);
   })
   .catch((err) => {
     console.log(err);
