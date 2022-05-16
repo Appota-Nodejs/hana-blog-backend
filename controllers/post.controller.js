@@ -4,13 +4,7 @@ const { validationResult } = require('express-validator');
 // Get all the posts - list
 exports.posts = async (req, res, next) => {
   try {
-    const limit = 5;
-    const { offset = 1 } = req.query;
-
-    const posts = await Post.findAll({
-      offset: (offset - 1) * limit,
-      limit
-    });
+    const posts = await Post.findAll();
 
     return res.status(200).json({
       success: true,
@@ -47,7 +41,7 @@ exports.create = async (req, res, next) => {
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
       const error = new Error(
-        'Invalid comment, please check your inputs and try again later'
+        'Invalid post, please check your inputs and try again later'
       );
       return next(error);
     }
@@ -85,12 +79,14 @@ exports.update = async (req, res, next) => {
 
     const body = req.body;
     const id = req.params.id;
+    
+    body['authorId'] = req.userData.userId;
 
     const post = await Post.update(body, {
       where: { id }
     });
 
-    if (!post[0]) throw next(new Error('id not found!'));
+    if (!post[0]) throw next(new Error('ID post is not found!'));
 
     res.status(200).json({
       success: true,
@@ -110,7 +106,7 @@ exports.destroy = async (req, res, next) => {
       where: { id }
     });
 
-    if (!post[0]) throw next(new Error('id not found!'));
+    if (!post[0]) throw next(new Error('ID post is not found!'));
 
     res.status(200).json({
       success: true,
