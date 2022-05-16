@@ -1,5 +1,7 @@
-const Post = require('../models/post');
 const { validationResult } = require('express-validator');
+
+const Post = require('../models/post');
+const isValidInput = require('../utils/input-validator');
 
 // Get all the posts - list
 exports.posts = async (req, res, next) => {
@@ -9,7 +11,7 @@ exports.posts = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: 'Get all the posts',
-      posts
+      posts,
     });
   } catch (error) {
     next(new Error('Error Server!'));
@@ -20,15 +22,19 @@ exports.posts = async (req, res, next) => {
 exports.getOne = async (req, res, next) => {
   try {
     const id = req.params.id;
+    if (!isValidInput(id, 'id')) {
+      const error = new Error('Invalid inputs, please use valid inputs');
+      return next(error);
+    }
 
     const post = await Post.findOne({
-      where: { id }
+      where: { id },
     });
 
     return res.status(200).json({
       success: true,
       message: 'Get one the post',
-      post
+      post,
     });
   } catch (error) {
     next(new Error('Error Server!'));
@@ -48,18 +54,26 @@ exports.create = async (req, res, next) => {
 
     const { title, content, imageLink } = req.body;
     const authorId = req.userData.userId;
+    if (
+      !isValidInput(title, 'text') ||
+      !isValidInput(content, 'text') ||
+      !isValidInput(authorId, 'id')
+    ) {
+      const error = new Error('Invalid inputs, please use valid inputs');
+      return next(error);
+    }
 
     const post = await Post.create({
       title,
       content,
       imageLink,
-      authorId
+      authorId,
     });
 
     res.status(201).json({
       success: true,
       message: 'Create the post success',
-      post
+      post,
     });
   } catch (error) {
     next(new Error('Error Server!'));
@@ -79,18 +93,22 @@ exports.update = async (req, res, next) => {
 
     const body = req.body;
     const id = req.params.id;
-    
+    if (!isValidInput(id, 'id')) {
+      const error = new Error('Invalid inputs, please use valid inputs');
+      return next(error);
+    }
+
     body['authorId'] = req.userData.userId;
 
     const post = await Post.update(body, {
-      where: { id }
+      where: { id },
     });
 
     if (!post[0]) throw next(new Error('ID post is not found!'));
 
     res.status(200).json({
       success: true,
-      message: 'Update the post success'
+      message: 'Update the post success',
     });
   } catch (error) {
     next(new Error('Error Server!'));
@@ -101,16 +119,20 @@ exports.update = async (req, res, next) => {
 exports.destroy = async (req, res, next) => {
   try {
     const id = req.params.id;
+    if (!isValidInput(id, 'id')) {
+      const error = new Error('Invalid inputs, please use valid inputs');
+      return next(error);
+    }
 
     const post = await Post.destroy({
-      where: { id }
+      where: { id },
     });
 
     if (!post[0]) throw next(new Error('ID post is not found!'));
 
     res.status(200).json({
       success: true,
-      message: 'Delete the post success'
+      message: 'Delete the post success',
     });
   } catch (error) {
     next(new Error('Error Server!'));

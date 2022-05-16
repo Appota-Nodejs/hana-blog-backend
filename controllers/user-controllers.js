@@ -7,15 +7,16 @@ const isValidInput = require('../utils/input-validator');
 
 const getUser = async (req, res, next) => {
   const userId = req.params.userId;
-
   if (!isValidInput(userId, 'id')) {
     const error = new Error('Invalid inputs, please use valid inputs');
     return next(error);
   }
 
+  res.json({ message: 'ok' });
+
   let user;
   try {
-    user = await User.findByPk(+userId);
+    user = await User.findByPk(userId);
   } catch (err) {
     const error = new Error('Fetching user failed, please try again later');
     return next(error);
@@ -44,6 +45,15 @@ const register = async (req, res, next) => {
   }
 
   const { username, password, description } = req.body;
+  if (
+    !isValidInput(username, 'username') ||
+    !isValidInput(password, 'password') ||
+    !isValidInput(description, 'text')
+  ) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let existingUser;
   try {
     existingUser = await User.findOne({ where: { username: username } });
@@ -111,6 +121,14 @@ const login = async (req, res, next) => {
   }
 
   const { username, password } = req.body;
+  if (
+    !isValidInput(username, 'username') ||
+    !isValidInput(password, 'password')
+  ) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let existingUser;
   try {
     existingUser = await User.findOne({ where: { username: username } });

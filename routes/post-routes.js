@@ -21,13 +21,19 @@ router.get('/:id', getOne);
 router.post(
   '/',
   checkAuth,
-  [check('content').not().isEmpty(), check('title').not().isEmpty()],
+  [
+    check('content').not().isEmpty().trim().escape(),
+    check('title').not().isEmpty().trim().escape(),
+  ],
   create
 );
 router.put(
   '/:id',
   checkAuth,
-  [check('content').not().isEmpty(), check('title').not().isEmpty()],
+  [
+    check('content').not().isEmpty().trim().escape(),
+    check('title').not().isEmpty().trim().escape(),
+  ],
   update
 );
 router.delete('/:id', checkAuth, destroy);
@@ -41,9 +47,9 @@ router.use(checkAuth);
 router.post(
   '/:postId/comments',
   [
-    check('content').not().isEmpty(),
-    check('authorId').not().isEmpty(),
-    check('postId').not().isEmpty(),
+    check('content').not().isEmpty().trim().escape(),
+    check('authorId').not().isEmpty().trim().escape(),
+    check('postId').not().isEmpty().trim().escape(),
   ],
   commentControllers.createComment
 );

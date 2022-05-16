@@ -1,9 +1,16 @@
 const { validationResult } = require('express-validator');
+
 const Comment = require('../models/comment');
 const Post = require('../models/post');
+const isValidInput = require('../utils/input-validator');
 
 const getComments = async (req, res, next) => {
   const postId = req.params.postId;
+  if (!isValidInput(postId, 'id')) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let correspondingPost;
   try {
     correspondingPost = await Post.findByPk(postId);
@@ -50,6 +57,15 @@ const createComment = async (req, res, next) => {
   }
 
   const { content, authorId, postId } = req.body;
+  if (
+    !isValidInput(content, 'text') ||
+    !isValidInput(authorId, 'id') ||
+    !isValidInput(postId, 'id')
+  ) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let correspondingPost;
   try {
     correspondingPost = await Post.findByPk(postId);
