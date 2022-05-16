@@ -41,6 +41,7 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
+  const { username, password, description } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ where: { username: username } });
@@ -54,7 +55,6 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
-  const { username, password, description } = req.body;
   let hashedPassword;
   try {
     hashedPassword = await bcrypt.hash(password, 12);
@@ -108,6 +108,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  const { username, password } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ where: { username: username } });
@@ -121,7 +122,6 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  const { username, password } = req.body;
   let isValidPassword = false;
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
