@@ -14,8 +14,8 @@ router.post(
   '/:postId',
   [
     check('content').not().isEmpty(),
-    // check('authorId').not().isEmpty(),
-    // check('postId').not().isEmpty(),
+    check('authorId').not().isEmpty(),
+    check('postId').not().isEmpty(),
   ],
   commentControllers.createComment
 );
