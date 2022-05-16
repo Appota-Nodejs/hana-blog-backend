@@ -72,7 +72,7 @@ exports.update = async (req, res, next) => {
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
       const error = new Error(
-        'Invalid comment, please check your inputs and try again later'
+        'Invalid post, please check your inputs and try again later'
       );
       return next(error);
     }
@@ -105,8 +105,8 @@ exports.destroy = async (req, res, next) => {
     const post = await Post.destroy({
       where: { id }
     });
-
-    if (!post[0]) throw next(new Error('ID post is not found!'));
+  
+    if (!post) throw next(new Error('ID post is not found!'));
 
     res.status(200).json({
       success: true,
