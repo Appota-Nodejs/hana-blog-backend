@@ -3,11 +3,25 @@ const Comment = require('../models/comment');
 const Post = require('../models/post');
 
 const getComments = async (req, res, next) => {
-  const limit = 5;
   const postId = req.params.postId;
-  const offset = req.query.offset;
-  let total, comments;
+  let correspondingPost;
+  try {
+    correspondingPost = await Post.findByPk(postId);
+  } catch (err) {
+    const error = new Error('Get comment failed, please try again later');
+    return next(error);
+  }
 
+  if (!correspondingPost) {
+    const error = new Error(
+      'Invalid values for comment, please try again later'
+    );
+    return next(error);
+  }
+
+  const limit = 5;
+  const offset = req.query.offset || 1;
+  let total, comments;
   try {
     const { count, rows } = await Comment.findAndCountAll({
       where: {
@@ -35,15 +49,11 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
-  const { content, authorId, postId } = req.body;
-
   let correspondingPost;
   try {
     correspondingPost = await Post.findByPk(postId);
   } catch (err) {
-    const error = new Error(
-      'Invalid values for comment, please try again later'
-    );
+    const error = new Error('Create comment failed, please try again later');
     return next(error);
   }
 
@@ -54,6 +64,7 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
+  const { content, authorId, postId } = req.body;
   const newComment = new Comment({
     content,
     authorId,
