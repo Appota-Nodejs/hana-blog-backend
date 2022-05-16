@@ -6,11 +6,6 @@ const User = require('../models/user');
 
 const getUser = async (req, res, next) => {
   const userId = req.params.userId;
-  if (req.userData.userId !== +userId) {
-    const error = new Error('Invalid user, please try again later');
-    return next(error);
-  }
-
   let user;
   try {
     user = await User.findByPk(userId);
