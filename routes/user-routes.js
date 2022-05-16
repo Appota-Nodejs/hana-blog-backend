@@ -19,7 +19,7 @@ router.post(
   [
     check('username').not().isEmpty().trim().escape(),
     check('password').trim().isLength({ min: 6 }).escape(),
-    check('description').not().isEmpty().trim().escape(),
+    check('description').not().isEmpty().trim(),
   ],
   userControllers.register
 );
