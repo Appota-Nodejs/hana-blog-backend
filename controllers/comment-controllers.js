@@ -49,6 +49,7 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
+  const { content, authorId, postId } = req.body;
   let correspondingPost;
   try {
     correspondingPost = await Post.findByPk(postId);
@@ -64,7 +65,6 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
-  const { content, authorId, postId } = req.body;
   const newComment = new Comment({
     content,
     authorId,
