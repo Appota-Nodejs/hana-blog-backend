@@ -22,8 +22,8 @@ router.post(
   '/',
   checkAuth,
   [
-    check('content').not().isEmpty().trim().escape(),
-    check('title').not().isEmpty().trim().escape(),
+    check('content').not().isEmpty().trim(),
+    check('title').not().isEmpty().trim(),
   ],
   create
 );
@@ -31,8 +31,8 @@ router.put(
   '/:id',
   checkAuth,
   [
-    check('content').not().isEmpty().trim().escape(),
-    check('title').not().isEmpty().trim().escape(),
+    check('content').not().isEmpty().trim(),
+    check('title').not().isEmpty().trim(),
   ],
   update
 );
@@ -47,7 +47,7 @@ router.use(checkAuth);
 router.post(
   '/:postId/comments',
   [
-    check('content').not().isEmpty().trim().escape(),
+    check('content').not().isEmpty().trim(),
     check('authorId').not().isEmpty().trim().escape(),
     check('postId').not().isEmpty().trim().escape(),
   ],
