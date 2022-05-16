@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const xss = require('xss-clean');
 require('dotenv').config();
 
 const sequelize = require('./utils/database');
@@ -14,6 +16,8 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(helmet());
+app.use(xss());
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
