@@ -6,6 +6,10 @@ const User = require('../models/user');
 
 const getUser = async (req, res, next) => {
   const userId = req.params.userId;
+  if (req.userData.userId !== +userId) {
+    const error = new Error('Invalid user, please try again later');
+    return next(error);
+  }
 
   let user;
   try {
@@ -13,6 +17,12 @@ const getUser = async (req, res, next) => {
   } catch (err) {
     const error = new Error('Fetching user failed, please try again later');
     return next(error);
+  }
+
+  if (!user) {
+    res.status(200).json({
+      message: 'Invalid user',
+    });
   }
 
   res.status(200).json({
@@ -31,8 +41,6 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
-  const { username, password, description } = req.body;
-
   let existingUser;
   try {
     existingUser = await User.findOne({ where: { username: username } });
@@ -46,6 +54,7 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
+  const { username, password, description } = req.body;
   let hashedPassword;
   try {
     hashedPassword = await bcrypt.hash(password, 12);
@@ -99,9 +108,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  const { username, password } = req.body;
   let existingUser;
-
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
@@ -114,6 +121,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  const { username, password } = req.body;
   let isValidPassword = false;
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
