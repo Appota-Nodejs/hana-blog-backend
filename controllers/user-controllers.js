@@ -12,8 +12,6 @@ const getUser = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ message: 'ok' });
-
   let user;
   try {
     user = await User.findByPk(userId);
