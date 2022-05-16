@@ -1,8 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
 
-const router = express.Router();
-
 const {
   posts,
   getOne,
@@ -10,23 +8,50 @@ const {
   update,
   destroy,
 } = require('../controllers/post-controller');
-const authenticate = require('../middlewares/check-auth');
+const commentControllers = require('../controllers/comment-controllers');
+const checkAuth = require('../middlewares/check-auth');
+
+const router = express.Router();
+
+// Post Routes
 
 router.get('/', posts);
 router.get('/:id', getOne);
 
 router.post(
   '/',
-  authenticate,
-  [check('content').not().isEmpty(), check('title').not().isEmpty()],
+  checkAuth,
+  [
+    check('content').not().isEmpty().trim().escape(),
+    check('title').not().isEmpty().trim().escape(),
+  ],
   create
 );
 router.put(
   '/:id',
-  authenticate,
-  [check('content').not().isEmpty(), check('title').not().isEmpty()],
+  checkAuth,
+  [
+    check('content').not().isEmpty().trim().escape(),
+    check('title').not().isEmpty().trim().escape(),
+  ],
   update
 );
-router.delete('/:id', authenticate, destroy);
+router.delete('/:id', checkAuth, destroy);
+
+// Comment Routes
+
+router.get('/:postId/comments', commentControllers.getComments);
+
+router.use(checkAuth);
+
+router.post(
+  '/:postId/comments',
+  [
+    check('content').not().isEmpty().trim().escape(),
+    check('authorId').not().isEmpty().trim().escape(),
+    check('postId').not().isEmpty().trim().escape(),
+  ],
+  commentControllers.createComment
+);
 
 module.exports = router;

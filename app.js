@@ -1,12 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const xss = require('xss-clean');
 require('dotenv').config();
 
 const sequelize = require('./utils/database');
 const notFoundController = require('./controllers/not-found');
 const userRoutes = require('./routes/user-routes');
 const postRoutes = require('./routes/post-routes');
-const commentRoutes = require('./routes/comment-routes');
 const User = require('./models/user');
 const Post = require('./models/post');
 const Comment = require('./models/comment');
@@ -15,6 +16,8 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(helmet());
+app.use(xss());
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -29,9 +32,8 @@ app.use((req, res, next) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
-app.use('/api/comments', commentRoutes);
 
-app.use(notFoundController.get404);
+app.use(notFoundController);
 
 app.use((error, req, res, next) => {
   res.status(error.code || 500);
