@@ -3,12 +3,19 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const isValidInput = require('../utils/input-validator');
 
 const getUser = async (req, res, next) => {
   const userId = req.params.userId;
+
+  if (!isValidInput(userId, 'id')) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let user;
   try {
-    user = await User.findByPk(userId);
+    user = await User.findByPk(+userId);
   } catch (err) {
     const error = new Error('Fetching user failed, please try again later');
     return next(error);

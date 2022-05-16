@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 
-app.use(notFoundController.get404);
+app.use(notFoundController);
 
 app.use((error, req, res, next) => {
   res.status(error.code || 500);
