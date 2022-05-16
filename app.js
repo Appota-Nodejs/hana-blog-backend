@@ -1,5 +1,3 @@
-const path = require('path');
-
 const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
@@ -9,12 +7,14 @@ const notFoundController = require('./controllers/not-found');
 const userRoutes = require('./routes/user-routes');
 const postRoutes = require('./routes/post-routes');
 const commentRoutes = require('./routes/comment-routes');
+const User = require('./models/user');
+const Post = require('./models/post');
+const Comment = require('./models/comment');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -37,6 +37,13 @@ app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({ message: error.message || 'An error occurred!' });
 });
+
+Post.belongsTo(User, { foreignKey: 'authorId', onDelete: 'CASCADE' });
+User.hasMany(Post, { foreignKey: 'authorId' });
+Comment.belongsTo(User, { foreignKey: 'authorId', onDelete: 'CASCADE' });
+User.hasMany(Comment, { foreignKey: 'authorId' });
+Comment.belongsTo(Post, { foreignKey: 'postId', onDelete: 'CASCADE' });
+Post.hasMany(Comment, { foreignKey: 'postId' });
 
 sequelize
   .sync({ alter: true })
