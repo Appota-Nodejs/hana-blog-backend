@@ -28,10 +28,10 @@ router.get('/:publicAddress', userControllers.getPublicAddress);
 
 router.post(
   '/metamask-login',
-  // [
-  //   check('signature').not().isEmpty().trim(),
-  //   check('publicAddress ').not().isEmpty().trim(),
-  // ],
+  [
+    check('signature').not().isEmpty().trim(),
+    check('publicAddress').not().isEmpty().trim(),
+  ],
   userControllers.metamaskLogin
 );
 
