@@ -181,6 +181,11 @@ const login = async (req, res, next) => {
 
 const getPublicAddress = async (req, res, next) => {
   const publicAddress = req.params.publicAddress;
+  if (!isValidInput(publicAddress, 'key')) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let user;
   try {
     user = await User.findOne({ where: { publicAddress: publicAddress } });
@@ -215,10 +220,8 @@ const getPublicAddress = async (req, res, next) => {
   try {
     createdUser = await newUser.save();
   } catch (err) {
-    // const error = new Error('Registering failed, please try again later');
-    // return next(error);
-
-    return next(err);
+    const error = new Error('Registering failed, please try again later');
+    return next(error);
   }
 
   res.status(200).json({ nonce: createdUser.nonce });
@@ -232,6 +235,11 @@ const metamaskLogin = async (req, res, next) => {
   }
 
   const { signature, publicAddress } = req.body;
+  if (!isValidInput(signature, 'key') || !isValidInput(publicAddress, 'key')) {
+    const error = new Error('Invalid inputs, please use valid inputs');
+    return next(error);
+  }
+
   let user;
   try {
     user = await User.findOne({ where: { publicAddress: publicAddress } });
@@ -241,54 +249,52 @@ const metamaskLogin = async (req, res, next) => {
   }
 
   if (!user) {
-    const error = new Error(
-      `User with publicAddress ${publicAddress} is not found in database`
-    );
+    const error = new Error('User not found');
     return next(error);
   }
 
   const msg = `I am signing my one-time nonce: ${user.nonce}`;
-
   const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
   const address = recoverPersonalSignature({
     data: msgBufferHex,
     sig: signature,
   });
 
-  if (address.toLowerCase() === publicAddress.toLowerCase()) {
-    try {
-      user.nonce = Math.floor(Math.random() * 10000);
-      await user.save();
-    } catch (err) {
-      const error = new Error('Signature verification failed');
-      return next(error);
-    }
-
-    let token;
-    try {
-      token = jwt.sign(
-        {
-          userId: user.id,
-        },
-        process.env.JWT_KEY,
-        { expiresIn: '1h' }
-      );
-    } catch (err) {
-      const error = new Error('Logging in failed, please try again later');
-      return next(error);
-    }
-
-    res.status(200).json({
-      userId: user.id,
-      publicAddress: user.publicAddress,
-      username: user.username,
-      description: user.description,
-      token: token,
-    });
-  } else {
+  if (address !== publicAddress) {
     const error = new Error('Signature verification failed');
     return next(error);
   }
+
+  let savedUser;
+  try {
+    user.nonce = Math.floor(Math.random() * 10000);
+    savedUser = await user.save();
+  } catch (err) {
+    const error = new Error('Signature verification failed');
+    return next(error);
+  }
+
+  let token;
+  try {
+    token = jwt.sign(
+      {
+        userId: savedUser.id,
+      },
+      process.env.JWT_KEY,
+      { expiresIn: '1h' }
+    );
+  } catch (err) {
+    const error = new Error('Logging in failed, please try again later');
+    return next(error);
+  }
+
+  res.status(200).json({
+    userId: savedUser.id,
+    publicAddress: savedUser.publicAddress,
+    username: savedUser.username,
+    description: savedUser.description,
+    token: token,
+  });
 };
 
 module.exports = { getUser, register, login, metamaskLogin, getPublicAddress };

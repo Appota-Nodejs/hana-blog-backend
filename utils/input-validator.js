@@ -10,6 +10,9 @@ const isValidInput = (input, inputType = 'default') => {
     case 'password':
       pattern = /^[A-Za-z1-9@$!%*#?&]{6,}$/;
       break;
+    case 'key':
+      pattern = /^[A-Za-z0-9]+$/;
+      break;
     default:
       pattern = /^.+$/;
   }
