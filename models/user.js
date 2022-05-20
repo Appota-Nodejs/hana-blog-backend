@@ -24,6 +24,14 @@ const User = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    publicAddress: {
+      type: Sequelize.STRING,
+      unique: true,
+    },
+    nonce: {
+      type: Sequelize.INTEGER.UNSIGNED,
+      defaultValue: () => Math.floor(Math.random() * 1000000), // initial random value
+    },
   },
   {
     charset: 'utf8',
