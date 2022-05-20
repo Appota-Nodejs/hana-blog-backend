@@ -270,7 +270,7 @@ const metamaskLogin = async (req, res, next) => {
     user.nonce = Math.floor(Math.random() * 10000);
     savedUser = await user.save();
   } catch (err) {
-    const error = new Error('Signature verification failed');
+    const error = new Error('Logging in failed, please try again later');
     return next(error);
   }
 
