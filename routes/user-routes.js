@@ -24,6 +24,17 @@ router.post(
   userControllers.register
 );
 
+router.get('/:publicAddress', userControllers.getPublicAddress);
+
+router.post(
+  '/metamask-login',
+  [
+    check('signature').not().isEmpty().trim(),
+    check('publicAddress ').not().isEmpty().trim(),
+  ],
+  userControllers.metamaskLogin
+);
+
 router.get('/:userId', userControllers.getUser);
 
 module.exports = router;
