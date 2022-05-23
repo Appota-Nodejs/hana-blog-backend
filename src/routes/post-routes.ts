@@ -1,15 +1,15 @@
-const express = require('express');
-const { check } = require('express-validator');
+import express from 'express';
+import { check } from 'express-validator';
 
-const {
+import {
   posts,
   getOne,
   create,
   update,
   destroy,
-} = require('../controllers/post-controller');
-const commentControllers = require('../controllers/comment-controllers');
-const checkAuth = require('../middlewares/check-auth');
+} from '../controllers/post-controller';
+import commentControllers from '../controllers/comment-controllers';
+import checkAuth from '../middlewares/check-auth';
 
 const router = express.Router();
 

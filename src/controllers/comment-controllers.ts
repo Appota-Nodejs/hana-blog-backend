@@ -1,17 +1,18 @@
-const { validationResult } = require('express-validator');
+import { RequestHandler } from 'express';
+import { validationResult } from 'express-validator';
 
-const Comment = require('../models/comment');
-const Post = require('../models/post');
-const isValidInput = require('../utils/input-validator');
+import Comment from '../models/comment';
+import Post from '../models/post';
+import isValidInput from '../utils/input-validator';
 
-const getComments = async (req, res, next) => {
+const getComments: RequestHandler = async (req, res, next) => {
   const postId = req.params.postId;
   if (!isValidInput(postId, 'id')) {
     const error = new Error('Invalid inputs, please use valid inputs');
     return next(error);
   }
 
-  let correspondingPost;
+  let correspondingPost: typeof Post | null;
   try {
     correspondingPost = await Post.findByPk(postId);
   } catch (err) {
@@ -27,8 +28,8 @@ const getComments = async (req, res, next) => {
   }
 
   const limit = 100;
-  const offset = req.query.offset || 1;
-  let total, comments;
+  const offset = +req.query.offset! || 1;
+  let total: number, comments: typeof Post[];
   try {
     const { count, rows } = await Comment.findAndCountAll({
       where: {
@@ -47,7 +48,7 @@ const getComments = async (req, res, next) => {
   res.status(200).json({ total: total, comments: comments });
 };
 
-const createComment = async (req, res, next) => {
+const createComment: RequestHandler = async (req, res, next) => {
   const validationError = validationResult(req);
   if (!validationError.isEmpty()) {
     const error = new Error(
@@ -56,7 +57,11 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
-  const { content, authorId, postId } = req.body;
+  const {
+    content,
+    authorId,
+    postId,
+  }: { content: string; authorId: number; postId: number } = req.body;
   if (
     !isValidInput(content, 'text') ||
     !isValidInput(authorId, 'id') ||
@@ -66,7 +71,7 @@ const createComment = async (req, res, next) => {
     return next(error);
   }
 
-  let correspondingPost;
+  let correspondingPost: typeof Post | null;
   try {
     correspondingPost = await Post.findByPk(postId);
   } catch (err) {
@@ -87,7 +92,7 @@ const createComment = async (req, res, next) => {
     postId,
   });
 
-  let createdComment;
+  let createdComment: typeof Post;
   try {
     createdComment = await newComment.save();
   } catch (err) {
@@ -103,4 +108,4 @@ const createComment = async (req, res, next) => {
   });
 };
 
-module.exports = { createComment, getComments };
+export default { createComment, getComments };

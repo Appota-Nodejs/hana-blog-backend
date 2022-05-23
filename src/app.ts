@@ -5,12 +5,12 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 
 import sequelize from './utils/database';
-import notFoundController from './controllers/not-found';
-import userRoutes from './routes/user-routes';
-import postRoutes from './routes/post-routes';
 import User from './models/user';
 import Post from './models/post';
 import Comment from './models/comment';
+import userRoutes from './routes/user-routes';
+import postRoutes from './routes/post-routes';
+import notFoundController from './controllers/not-found';
 
 dotenv.config();
 

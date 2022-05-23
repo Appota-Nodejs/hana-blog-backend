@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var isValidInput = function (input, inputType) {
     if (inputType === void 0) { inputType = 'default'; }
     var pattern;
@@ -23,4 +24,4 @@ var isValidInput = function (input, inputType) {
     }
     return true;
 };
-module.exports = isValidInput;
+exports.default = isValidInput;
