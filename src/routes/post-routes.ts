@@ -54,4 +54,4 @@ router.post(
   commentControllers.createComment
 );
 
-module.exports = router;
+export default router;
