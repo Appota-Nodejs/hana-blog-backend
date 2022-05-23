@@ -1,22 +1,23 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
-const { validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { recoverPersonalSignature, personalSign } = require('eth-sig-util');
-const { bufferToHex } = require('ethereumjs-util');
+import { RequestHandler } from 'express';
+import { validationResult } from 'express-validator';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { recoverPersonalSignature } from 'eth-sig-util';
+import { bufferToHex } from 'ethereumjs-util';
 
-const User = require('../models/user');
-const isValidInput = require('../utils/input-validator');
+import User from '../models/user';
+import isValidInput from '../utils/input-validator';
 
-const getUser = async (req, res, next) => {
+const getUser: RequestHandler = async (req, res, next) => {
   const userId = req.params.userId;
   if (!isValidInput(userId, 'id')) {
     const error = new Error('Invalid inputs, please use valid inputs');
     return next(error);
   }
 
-  let user;
+  let user: typeof User | null;
   try {
     user = await User.findByPk(userId);
   } catch (err) {
@@ -39,14 +40,18 @@ const getUser = async (req, res, next) => {
   });
 };
 
-const register = async (req, res, next) => {
+const register: RequestHandler = async (req, res, next) => {
   const validationError = validationResult(req);
   if (!validationError.isEmpty()) {
     const error = new Error('Invalid inputs passed, please check your data');
     return next(error);
   }
 
-  const { username, password, description } = req.body;
+  const {
+    username,
+    password,
+    description,
+  }: { username: string; password: string; description: string } = req.body;
   if (
     !isValidInput(username, 'username') ||
     !isValidInput(password, 'password') ||
@@ -56,7 +61,7 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
-  let existingUser;
+  let existingUser: typeof User | null;
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
@@ -69,7 +74,7 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
-  let hashedPassword;
+  let hashedPassword: string;
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
@@ -83,7 +88,7 @@ const register = async (req, res, next) => {
     description,
   });
 
-  let createdUser;
+  let createdUser: typeof User;
   try {
     createdUser = await newUser.save();
   } catch (err) {
@@ -91,13 +96,13 @@ const register = async (req, res, next) => {
     return next(error);
   }
 
-  let token;
+  let token: string;
   try {
     token = jwt.sign(
       {
         userId: createdUser.dataValues.id,
       },
-      process.env.JWT_KEY,
+      'secret-key',
       { expiresIn: '1h' }
     );
   } catch (err) {
@@ -113,14 +118,15 @@ const register = async (req, res, next) => {
   });
 };
 
-const login = async (req, res, next) => {
+const login: RequestHandler = async (req, res, next) => {
   const validationError = validationResult(req);
   if (!validationError.isEmpty()) {
     const error = new Error('Invalid inputs passed, please check your data');
     return next(error);
   }
 
-  const { username, password } = req.body;
+  const { username, password }: { username: string; password: string } =
+    req.body;
   if (
     !isValidInput(username, 'username') ||
     !isValidInput(password, 'password')
@@ -129,7 +135,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  let existingUser;
+  let existingUser: typeof User | null;
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
@@ -157,13 +163,13 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  let token;
+  let token: string;
   try {
     token = jwt.sign(
       {
         userId: existingUser.id,
       },
-      process.env.JWT_KEY,
+      'secret-key',
       { expiresIn: '1h' }
     );
   } catch (err) {
@@ -179,14 +185,14 @@ const login = async (req, res, next) => {
   });
 };
 
-const getPublicAddress = async (req, res, next) => {
+const getPublicAddress: RequestHandler = async (req, res, next) => {
   const publicAddress = req.params.publicAddress;
   if (!isValidInput(publicAddress, 'key')) {
     const error = new Error('Invalid inputs, please use valid inputs');
     return next(error);
   }
 
-  let user;
+  let user: typeof User | null;
   try {
     user = await User.findOne({ where: { publicAddress: publicAddress } });
   } catch (err) {
@@ -198,7 +204,7 @@ const getPublicAddress = async (req, res, next) => {
     res.status(200).json({ nonce: user.nonce });
   }
 
-  let hashedPassword;
+  let hashedPassword: string;
   try {
     hashedPassword = await bcrypt.hash(
       crypto.randomBytes(18).toString('hex'),
@@ -216,7 +222,7 @@ const getPublicAddress = async (req, res, next) => {
     publicAddress: publicAddress,
   });
 
-  let createdUser;
+  let createdUser: typeof User;
   try {
     createdUser = await newUser.save();
   } catch (err) {
@@ -227,20 +233,23 @@ const getPublicAddress = async (req, res, next) => {
   res.status(200).json({ nonce: createdUser.nonce });
 };
 
-const metamaskLogin = async (req, res, next) => {
+const metamaskLogin: RequestHandler = async (req, res, next) => {
   const validationError = validationResult(req);
   if (!validationError.isEmpty()) {
     const error = new Error('Invalid inputs passed, please check your data');
     return next(error);
   }
 
-  const { signature, publicAddress } = req.body;
+  const {
+    signature,
+    publicAddress,
+  }: { signature: string; publicAddress: string } = req.body;
   if (!isValidInput(signature, 'key') || !isValidInput(publicAddress, 'key')) {
     const error = new Error('Invalid inputs, please use valid inputs');
     return next(error);
   }
 
-  let user;
+  let user: typeof User | null;
   try {
     user = await User.findOne({ where: { publicAddress: publicAddress } });
   } catch (err) {
@@ -265,7 +274,7 @@ const metamaskLogin = async (req, res, next) => {
     return next(error);
   }
 
-  let savedUser;
+  let savedUser: typeof User;
   try {
     user.nonce = Math.floor(Math.random() * 10000);
     savedUser = await user.save();
@@ -274,13 +283,13 @@ const metamaskLogin = async (req, res, next) => {
     return next(error);
   }
 
-  let token;
+  let token: string;
   try {
     token = jwt.sign(
       {
         userId: savedUser.id,
       },
-      process.env.JWT_KEY,
+      'secret-key',
       { expiresIn: '1h' }
     );
   } catch (err) {
@@ -297,4 +306,4 @@ const metamaskLogin = async (req, res, next) => {
   });
 };
 
-module.exports = { getUser, register, login, metamaskLogin, getPublicAddress };
+export default { getUser, register, login, metamaskLogin, getPublicAddress };

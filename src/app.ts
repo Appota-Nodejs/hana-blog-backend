@@ -1,25 +1,27 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
-const xss = require('xss-clean');
-require('dotenv').config();
+import express, { Request, Response, NextFunction } from 'express';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+// import xss from 'xss-clean';
+import dotenv from 'dotenv';
 
-const sequelize = require('./utils/database');
-const notFoundController = require('./controllers/not-found');
-const userRoutes = require('./routes/user-routes');
-const postRoutes = require('./routes/post-routes');
-const User = require('./models/user');
-const Post = require('./models/post');
-const Comment = require('./models/comment');
+import sequelize from './utils/database';
+import User from './models/user';
+import Post from './models/post';
+import Comment from './models/comment';
+import userRoutes from './routes/user-routes';
+import postRoutes from './routes/post-routes';
+import notFoundController from './controllers/not-found';
+
+dotenv.config();
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(helmet());
-app.use(xss());
+// app.use(xss());
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -35,9 +37,8 @@ app.use('/api/posts', postRoutes);
 
 app.use(notFoundController);
 
-app.use((error, req, res, next) => {
-  res.status(error.code || 500);
-  res.json({ message: error.message || 'An error occurred!' });
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({ message: error.message || 'An error occurred!' });
 });
 
 Post.belongsTo(User, { foreignKey: 'authorId', onDelete: 'CASCADE' });

@@ -2,8 +2,8 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../utils/database');
 
-const Post = sequelize.define(
-  'post',
+const Comment = sequelize.define(
+  'comment',
   {
     id: {
       type: Sequelize.INTEGER,
@@ -11,18 +11,15 @@ const Post = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    title: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
     content: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-    },
-    imageLink: {
       type: Sequelize.STRING,
+      allowNull: false,
     },
     authorId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    postId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
@@ -33,4 +30,4 @@ const Post = sequelize.define(
   }
 );
 
-module.exports = Post;
+export default Comment;

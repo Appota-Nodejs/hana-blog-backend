@@ -37,4 +37,4 @@ router.post(
 
 router.get('/:userId', userControllers.getUser);
 
-module.exports = router;
+export default router;

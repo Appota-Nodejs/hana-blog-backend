@@ -1,5 +1,5 @@
-const isValidInput = (input, inputType = 'default') => {
-  let pattern;
+const isValidInput = (input: string | number, inputType = 'default') => {
+  let pattern: RegExp;
   switch (inputType) {
     case 'id':
       pattern = /^[1-9]+$/;
@@ -24,4 +24,4 @@ const isValidInput = (input, inputType = 'default') => {
   return true;
 };
 
-module.exports = isValidInput;
+export default isValidInput;
