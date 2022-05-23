@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import {RequestHandler} from 'express';
 
-module.exports = (req, res, next) => {
+export default function checkAuth (req, res, next) {
   if (req.method === 'OPTIONS') {
     return next();
   }
