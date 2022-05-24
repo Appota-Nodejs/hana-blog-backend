@@ -1,8 +1,8 @@
 import { validationResult, Result, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-const Post = require('../models/post');
-const isValidInput = require('../utils/input-validator');
+import Post from '../models/post-model';
+import isValidInput from '../utils/input-validator';
 
 // interface for object data
 interface RequestData {
@@ -46,7 +46,7 @@ const getOne: RequestHandler = async (
       return next(error);
     }
 
-    const post: object = await Post.findOne({
+    const post: Post | null = await Post.findOne({
       where: { id }
     });
 

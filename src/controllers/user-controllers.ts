@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import { recoverPersonalSignature } from 'eth-sig-util';
 import { bufferToHex } from 'ethereumjs-util';
 
-import User from '../models/user';
+import User from '../models/user-model';
 import isValidInput from '../utils/input-validator';
 
 const getUser: RequestHandler = async (req, res, next) => {
