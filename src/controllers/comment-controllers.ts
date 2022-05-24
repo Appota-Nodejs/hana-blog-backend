@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import { validationResult } from 'express-validator';
 
-import Comment from '../models/comment';
-import Post from '../models/post';
+import Comment from '../models/comment-model';
+import Post from '../models/post-model';
 import isValidInput from '../utils/input-validator';
 
 const getComments: RequestHandler = async (req, res, next) => {
@@ -12,7 +12,7 @@ const getComments: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let correspondingPost: typeof Post | null;
+  let correspondingPost: Post | null;
   try {
     correspondingPost = await Post.findByPk(postId);
   } catch (err) {
@@ -29,7 +29,7 @@ const getComments: RequestHandler = async (req, res, next) => {
 
   const limit = 100;
   const offset = +req.query.offset! || 1;
-  let total: number, comments: typeof Post[];
+  let total: number, comments: Comment[];
   try {
     const { count, rows } = await Comment.findAndCountAll({
       where: {
@@ -71,7 +71,7 @@ const createComment: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let correspondingPost: typeof Post | null;
+  let correspondingPost: Post | null;
   try {
     correspondingPost = await Post.findByPk(postId);
   } catch (err) {
@@ -92,7 +92,7 @@ const createComment: RequestHandler = async (req, res, next) => {
     postId,
   });
 
-  let createdComment: typeof Post;
+  let createdComment: Comment;
   try {
     createdComment = await newComment.save();
   } catch (err) {
@@ -101,10 +101,10 @@ const createComment: RequestHandler = async (req, res, next) => {
   }
 
   res.status(201).json({
-    commentId: createdComment.dataValues.id,
-    content: createdComment.dataValues.content,
-    authorId: createdComment.dataValues.authorId,
-    postId: createdComment.dataValues.postId,
+    commentId: createdComment.id,
+    content: createdComment.content,
+    authorId: createdComment.authorId,
+    postId: createdComment.postId,
   });
 };
 
