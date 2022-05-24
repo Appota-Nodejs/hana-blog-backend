@@ -20,7 +20,7 @@ const getComments: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (!correspondingPost) {
+  if (correspondingPost === null) {
     const error = new Error(
       'Invalid values for comment, please try again later'
     );
@@ -79,22 +79,20 @@ const createComment: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (!correspondingPost) {
+  if (correspondingPost === null) {
     const error = new Error(
       'Invalid values for comment, please try again later'
     );
     return next(error);
   }
 
-  const newComment = new Comment({
-    content,
-    authorId,
-    postId,
-  });
-
   let createdComment: Comment;
   try {
-    createdComment = await newComment.save();
+    createdComment = await Comment.create({
+      content: content,
+      authorId: authorId,
+      postId: postId,
+    });
   } catch (err) {
     const error = new Error('Could not create comment');
     return next(error);

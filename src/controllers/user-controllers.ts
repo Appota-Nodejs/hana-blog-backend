@@ -69,7 +69,7 @@ const register: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (!existingUser) {
+  if (existingUser !== null) {
     const error = new Error('User has already existed');
     return next(error);
   }
@@ -82,15 +82,13 @@ const register: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  const newUser = new User({
-    username,
-    password: hashedPassword,
-    description,
-  });
-
   let createdUser: User;
   try {
-    createdUser = await newUser.save();
+    createdUser = await User.create({
+      username: username,
+      password: hashedPassword,
+      description: description,
+    });
   } catch (err) {
     const error = new Error('Registering failed, please try again later');
     return next(error);
@@ -102,7 +100,7 @@ const register: RequestHandler = async (req, res, next) => {
       {
         userId: createdUser.id,
       },
-      'secret-key',
+      `${process.env.JWT_KEY}`,
       { expiresIn: '1h' }
     );
   } catch (err) {
@@ -143,7 +141,7 @@ const login: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (!existingUser) {
+  if (existingUser === null) {
     const error = new Error('Invalid credentials, could not log you in');
     return next(error);
   }
@@ -169,7 +167,7 @@ const login: RequestHandler = async (req, res, next) => {
       {
         userId: existingUser.id,
       },
-      'secret-key',
+      `${process.env.JWT_KEY}`,
       { expiresIn: '1h' }
     );
   } catch (err) {
@@ -215,16 +213,14 @@ const getPublicAddress: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  const newUser = new User({
-    username: publicAddress,
-    password: hashedPassword,
-    description: 'something about yourself',
-    publicAddress: publicAddress,
-  });
-
   let createdUser: User;
   try {
-    createdUser = await newUser.save();
+    createdUser = await User.create({
+      username: publicAddress,
+      password: hashedPassword,
+      description: 'something about yourself',
+      publicAddress: publicAddress,
+    });
   } catch (err) {
     const error = new Error('Registering failed, please try again later');
     return next(error);
@@ -257,12 +253,13 @@ const metamaskLogin: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (!user) {
+  if (user === null) {
     const error = new Error('User not found');
     return next(error);
   }
 
-  const msg = `I am signing my one-time nonce: ${user.nonce}`;
+  const msg = `Nonce của bạn là: ${user.nonce}`;
+  // const msg = `I am signing my one-time nonce: ${user.nonce}`;
   const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
   const address = recoverPersonalSignature({
     data: msgBufferHex,
@@ -289,7 +286,7 @@ const metamaskLogin: RequestHandler = async (req, res, next) => {
       {
         userId: savedUser.id,
       },
-      'secret-key',
+      `${process.env.JWT_KEY}`,
       { expiresIn: '1h' }
     );
   } catch (err) {

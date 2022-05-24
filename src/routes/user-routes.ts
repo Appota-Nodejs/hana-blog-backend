@@ -24,7 +24,7 @@ router.post(
   userControllers.login
 );
 
-router.get('/:publicAddress', userControllers.getPublicAddress);
+router.get('/public-address/:publicAddress', userControllers.getPublicAddress);
 
 router.post(
   '/metamask-login',

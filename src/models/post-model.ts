@@ -4,7 +4,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  ForeignKey
+  ForeignKey,
 } from 'sequelize';
 import sequelize from '../utils/database';
 import User from './user-model';
@@ -27,31 +27,31 @@ Post.init(
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
     },
     imageLink: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     authorId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
     },
     createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE
+    updatedAt: DataTypes.DATE,
   },
   {
     sequelize,
     tableName: 'posts',
     charset: 'utf8',
-    collate: 'utf8_unicode_ci'
+    collate: 'utf8_unicode_ci',
   }
 );
 

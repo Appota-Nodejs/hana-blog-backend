@@ -48,11 +48,11 @@ User.hasMany(Comment, { foreignKey: 'authorId' });
 Comment.belongsTo(Post, { foreignKey: 'postId', onDelete: 'CASCADE' });
 Post.hasMany(Comment, { foreignKey: 'postId' });
 
-sequelize
-  .sync({ alter: true })
-  .then((result) => {
+(async () => {
+  try {
+    await sequelize.sync({ alter: true });
     app.listen(process.env.PORT || 8000);
-  })
-  .catch((err) => {
+  } catch (err) {
     console.log(err);
-  });
+  }
+})();
