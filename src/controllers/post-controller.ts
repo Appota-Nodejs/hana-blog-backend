@@ -1,14 +1,17 @@
 import { validationResult, Result, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-const Post = require('../models/post');
-const isValidInput = require('../utils/input-validator');
+import Post from '../models/post-model';
+import isValidInput from '../utils/input-validator';
 
 // interface for object data
 interface RequestData {
   title: string;
   content: string;
   imageLink: string;
+}
+
+interface CustomResponse extends Response {
 }
 
 // Get all the posts - list
@@ -43,7 +46,7 @@ const getOne: RequestHandler = async (
       return next(error);
     }
 
-    const post: object = await Post.findOne({
+    const post: Post | null = await Post.findOne({
       where: { id }
     });
 
@@ -53,7 +56,7 @@ const getOne: RequestHandler = async (
       post
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
@@ -98,7 +101,7 @@ const create: RequestHandler = async (
       post
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
@@ -139,12 +142,12 @@ const update: RequestHandler = async (
 
     if (!post[0]) throw next(new Error('ID post is not found!'));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Update the post success'
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
@@ -167,12 +170,12 @@ const destroy: RequestHandler = async (
 
     if (!post) throw next(new Error('ID post is not found!'));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Delete the post success'
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
