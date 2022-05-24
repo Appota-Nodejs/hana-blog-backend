@@ -4,15 +4,15 @@ import helmet from 'helmet';
 // import xss from 'xss-clean';
 import dotenv from 'dotenv';
 
+dotenv.config();
+
 import sequelize from './utils/database';
-import User from './models/user';
-import Post from './models/post';
-import Comment from './models/comment';
+import User from './models/user-model';
+import Post from './models/post-model';
+import Comment from './models/comment-model';
 import userRoutes from './routes/user-routes';
 import postRoutes from './routes/post-routes';
 import notFoundController from './controllers/not-found';
-
-dotenv.config();
 
 const app = express();
 
