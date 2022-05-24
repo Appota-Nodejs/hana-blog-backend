@@ -1,7 +1,7 @@
-const express = require('express');
-const { check } = require('express-validator');
+import express from 'express';
+import { check } from 'express-validator';
 
-const userControllers = require('../controllers/user-controllers');
+import userControllers from '../controllers/user-controllers';
 
 const router = express.Router();
 
