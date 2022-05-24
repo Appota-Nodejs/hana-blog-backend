@@ -6,7 +6,7 @@
 
 Run
 
-```
+```node
 npm install
 ```
 
@@ -18,7 +18,7 @@ to install all dependencies
 
 Create .env file with these 2 fields
 
-```
+```env
 SQL_URI='mysql://USERNAME:PASSWORD@localhost:3306/hana-blog'
 JWT_KEY=???
 ```
@@ -29,7 +29,7 @@ JWT_KEY=???
 
 Run
 
-```
+```node
 npm run dev
 ```
 
