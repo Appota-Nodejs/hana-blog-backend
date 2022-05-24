@@ -17,7 +17,7 @@ const getUser: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let user: typeof User | null;
+  let user: User | null;
   try {
     user = await User.findByPk(userId);
   } catch (err) {
@@ -25,19 +25,19 @@ const getUser: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (!user) {
+  if (user === null) {
     res.status(200).json({
       message: 'Invalid user',
     });
+  } else {
+    res.status(200).json({
+      user: {
+        userId: user.id,
+        username: user.username,
+        description: user.description,
+      },
+    });
   }
-
-  res.status(200).json({
-    user: {
-      userId: user.dataValues.id,
-      username: user.dataValues.username,
-      description: user.dataValues.description,
-    },
-  });
 };
 
 const register: RequestHandler = async (req, res, next) => {
@@ -61,7 +61,7 @@ const register: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let existingUser: typeof User | null;
+  let existingUser: User | null;
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
@@ -69,7 +69,7 @@ const register: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  if (existingUser) {
+  if (!existingUser) {
     const error = new Error('User has already existed');
     return next(error);
   }
@@ -88,7 +88,7 @@ const register: RequestHandler = async (req, res, next) => {
     description,
   });
 
-  let createdUser: typeof User;
+  let createdUser: User;
   try {
     createdUser = await newUser.save();
   } catch (err) {
@@ -100,7 +100,7 @@ const register: RequestHandler = async (req, res, next) => {
   try {
     token = jwt.sign(
       {
-        userId: createdUser.dataValues.id,
+        userId: createdUser.id,
       },
       'secret-key',
       { expiresIn: '1h' }
@@ -111,9 +111,9 @@ const register: RequestHandler = async (req, res, next) => {
   }
 
   res.status(201).json({
-    userId: createdUser.dataValues.id,
-    username: createdUser.dataValues.username,
-    description: createdUser.dataValues.description,
+    userId: createdUser.id,
+    username: createdUser.username,
+    description: createdUser.description,
     token: token,
   });
 };
@@ -135,7 +135,7 @@ const login: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let existingUser: typeof User | null;
+  let existingUser: User | null;
   try {
     existingUser = await User.findOne({ where: { username: username } });
   } catch (err) {
@@ -192,7 +192,7 @@ const getPublicAddress: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let user: typeof User | null;
+  let user: User | null;
   try {
     user = await User.findOne({ where: { publicAddress: publicAddress } });
   } catch (err) {
@@ -222,7 +222,7 @@ const getPublicAddress: RequestHandler = async (req, res, next) => {
     publicAddress: publicAddress,
   });
 
-  let createdUser: typeof User;
+  let createdUser: User;
   try {
     createdUser = await newUser.save();
   } catch (err) {
@@ -249,7 +249,7 @@ const metamaskLogin: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let user: typeof User | null;
+  let user: User | null;
   try {
     user = await User.findOne({ where: { publicAddress: publicAddress } });
   } catch (err) {
@@ -274,7 +274,7 @@ const metamaskLogin: RequestHandler = async (req, res, next) => {
     return next(error);
   }
 
-  let savedUser: typeof User;
+  let savedUser: User;
   try {
     user.nonce = Math.floor(Math.random() * 10000);
     savedUser = await user.save();
