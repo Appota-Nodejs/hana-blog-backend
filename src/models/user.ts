@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 
-const sequelize = require('../utils/database');
+import sequelize from '../utils/database';
 
 const User = sequelize.define(
   'user',
