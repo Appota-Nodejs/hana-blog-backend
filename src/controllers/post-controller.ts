@@ -1,5 +1,6 @@
 import { validationResult, Result, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
+import xss, { onTagAttr } from 'xss';
 
 import Post from '../models/post-model';
 import isValidInput from '../utils/input-validator';
@@ -76,8 +77,13 @@ const create: RequestHandler = async (
     }
 
     const body: RequestData = req.body;
-    const { title, content, imageLink } = body;
+    let { title, content, imageLink } = body;
     const authorId: number = res.locals.userId;
+
+    // xss
+    title = xss(title);
+    content = xss(content);
+    imageLink = xss(imageLink);
 
     if (
       !isValidInput(title, 'text') ||
@@ -121,8 +127,13 @@ const update: RequestHandler = async (
     }
 
     const body: RequestData = req.body;
-    const { title, content, imageLink } = body;
+    let { title, content, imageLink } = body;
     const id: number = Number(req.params.id);
+
+    // xss
+    title = xss(title);
+    content = xss(content);
+    imageLink = xss(imageLink);
 
     if (!isValidInput(id, 'id')) {
       const error: Error = new Error('Invalid inputs, please use valid inputs');
