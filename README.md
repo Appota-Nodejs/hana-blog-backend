@@ -33,5 +33,4 @@ Run
 npm run dev
 ```
 
-to spin up the development server.  
-After running this command, all the tables will be automatically created
+to spin up the development server. After running this command, all the tables will be automatically created
