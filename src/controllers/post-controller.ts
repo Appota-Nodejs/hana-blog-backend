@@ -11,6 +11,9 @@ interface RequestData {
   imageLink: string;
 }
 
+interface CustomResponse extends Response {
+}
+
 // Get all the posts - list
 const posts: RequestHandler = async (
   req: Request,
@@ -53,7 +56,7 @@ const getOne: RequestHandler = async (
       post
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
@@ -98,7 +101,7 @@ const create: RequestHandler = async (
       post
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
@@ -139,12 +142,12 @@ const update: RequestHandler = async (
 
     if (!post[0]) throw next(new Error('ID post is not found!'));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Update the post success'
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
@@ -167,12 +170,12 @@ const destroy: RequestHandler = async (
 
     if (!post) throw next(new Error('ID post is not found!'));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Delete the post success'
     });
   } catch (error) {
-    next(new Error('Error Server!'));
+    return next(new Error('Error Server!'));
   }
 };
 
