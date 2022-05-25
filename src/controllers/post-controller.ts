@@ -1,6 +1,6 @@
 import { validationResult, Result, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import xss, { onTagAttr } from 'xss';
+import xss from 'xss';
 
 import Post from '../models/post-model';
 import isValidInput from '../utils/input-validator';
@@ -13,6 +13,9 @@ interface RequestData {
 }
 
 interface CustomResponse extends Response {
+  success: true;
+  message: string;
+  data: Array<object>
 }
 
 // Get all the posts - list
